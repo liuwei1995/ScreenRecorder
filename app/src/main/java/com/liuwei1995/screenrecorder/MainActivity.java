@@ -10,12 +10,14 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.Settings;
+import android.support.annotation.IdRes;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.util.DisplayMetrics;
 import android.view.KeyEvent;
 import android.view.View;
 import android.widget.Button;
+import android.widget.RadioGroup;
 import android.widget.Toast;
 
 import com.liuwei1995.screenrecorder.service.DesktopViewTimerService;
@@ -27,10 +29,11 @@ import com.liuwei1995.screenrecorder.util.permission.RationaleListener;
 
 import java.util.List;
 
-public class MainActivity extends AppCompatActivity implements View.OnClickListener {
+public class MainActivity extends AppCompatActivity implements View.OnClickListener ,RadioGroup.OnCheckedChangeListener{
 
     private Button mButton;
     private static final String RECORD_STATUS = "record_status";
+    private RadioGroup mRadioGroup;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,7 +41,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         setContentView(R.layout.activity_main);
         mButton = (Button) findViewById(R.id.button);
         mButton.setOnClickListener(this);
-        findViewById(R.id.button2).setOnClickListener(this);
+        mRadioGroup = (RadioGroup) findViewById(R.id.rg);
+        mRadioGroup.setOnCheckedChangeListener(this);
         if(savedInstanceState != null) {
             isStarted = savedInstanceState.getBoolean(RECORD_STATUS);
         }
@@ -103,7 +107,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     /** 是否已经开启视频录制 */
     private boolean isStarted = false;
     /** 是否为标清视频 */
-    private boolean isVideoSd = true;
+    private boolean isVideoSd = false;
     /** 是否开启音频录制 */
     private boolean isAudio = true;
 
@@ -185,21 +189,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     public void onClick(View v) {
         switch (v.getId()){
             case R.id.button:
-                if (DesktopViewTimerService.isStart){
-                    stopScreenRecording();
-                }else {
-                    startScreenRecording();
-                }
-//                if(isStarted) {
-//                    mButton.setText("开始");
-//                    stopScreenRecording();
-//                } else {
-//                    startScreenRecording();
-//                }
-                break;
-            case R.id.button2:
                 permissionDesktopView();
                 break;
+//            case R.id.button2:
+//                permissionDesktopView();
+//                break;
             default:break;
         }
     }
@@ -236,8 +230,25 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     public void initDesktopView(){
-        DesktopViewTimerService.startService(this);
+//        DesktopViewTimerService.startService(this);
+        if (DesktopViewTimerService.isStart){
+            stopScreenRecording();
+        }else {
+            startScreenRecording();
+        }
     }
 
 
+    @Override
+    public void onCheckedChanged(RadioGroup group, @IdRes int checkedId) {
+        switch (checkedId){
+            case R.id.rb_SD:
+                isVideoSd = true;
+                break;
+            case R.id.rb_HD:
+                isVideoSd = false;
+                break;
+            default:isVideoSd = false;break;
+        }
+    }
 }

@@ -60,7 +60,7 @@ public class ScreenRecordActivity extends Activity {
     /** 是否已经开启视频录制 */
     private boolean isStarted = false;
     /** 是否为标清视频 */
-    private boolean isVideoSd = true;
+    private boolean isVideoSd = false;
     /** 是否开启音频录制 */
     private boolean isAudio = true;
 
